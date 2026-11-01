@@ -6,6 +6,7 @@
 dist/
 build/
 *.dist
+.vercel/
 
 # Environment variables
 .env
@@ -112,3 +113,5 @@ temp/
 # Manus version file (auto-generated, not part of source)
 client/public/__manus__/version.json
 .project-config.json
+
+.env*

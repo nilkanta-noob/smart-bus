@@ -1,9 +1,3 @@
-import dotenv from "dotenv";
-
-// Vite loads .env.local automatically for the browser. Also load it here so
-// the local Routes API proxy can use the same user configured demo key.
-dotenv.config({ path: ".env.local" });
-
 export const ENV = {
   appId: process.env.VITE_APP_ID ?? "",
   cookieSecret: process.env.JWT_SECRET ?? "",

@@ -165,7 +165,9 @@ export default defineConfig({
   root: path.resolve(import.meta.dirname, "client"),
   publicDir: path.resolve(import.meta.dirname, "client", "public"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    // Vercel's Express integration serves root `public/` files through its CDN.
+    // Keep the source assets in client/public; Vite only clears this output dir.
+    outDir: path.resolve(import.meta.dirname, "public"),
     emptyOutDir: true,
   },
   server: {
