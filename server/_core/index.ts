@@ -3,8 +3,8 @@ import { createServer } from "http";
 import net from "net";
 import { serveStatic, setupVite } from "./vite";
 
-// Load local secrets for the standalone dev server. Vercel injects env vars
-// and starts the root Express app in index.ts.
+// Load local secrets for the standalone dev server.
+dotenv.config();
 dotenv.config({ path: ".env.local" });
 process.env.NODE_ENV ??= "development";
 
