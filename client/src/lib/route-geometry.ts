@@ -126,9 +126,15 @@ export async function getRoadRouteGeometry(
   for (let start = 0; start < stops.length - 1; start += MAX_INTERMEDIATES + 1) {
     const end = Math.min(start + MAX_INTERMEDIATES + 1, stops.length - 1);
     const chunk = stops.slice(start, end + 1);
+    const clientKey = typeof window !== "undefined"
+      ? localStorage.getItem("smart_bus_gmaps_key") || import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""
+      : "";
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (clientKey) headers["x-goog-api-key"] = clientKey;
+
     const response = await fetch("/api/maps/compute-routes", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         origin: chunk[0].coord,
         destination: chunk[chunk.length - 1].coord,

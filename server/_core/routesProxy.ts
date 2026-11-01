@@ -29,8 +29,14 @@ export function registerRoutesProxy(app: Express) {
       res.status(400).json({ error: "Provide valid origin, destination, and up to 25 ordered intermediate waypoints." });
       return;
     }
-    if (!ENV.googleMapsApiKey) {
-      res.status(503).json({ error: "Google Maps Demo Key is not configured for Compute Routes." });
+    const apiKey = (req.headers["x-goog-api-key"] as string) ||
+                   (req.headers["x-google-maps-api-key"] as string) ||
+                   process.env.GOOGLE_MAPS_API_KEY ||
+                   process.env.VITE_GOOGLE_MAPS_API_KEY ||
+                   ENV.googleMapsApiKey;
+
+    if (!apiKey) {
+      res.status(503).json({ error: "Google Maps API Key is not configured for Compute Routes." });
       return;
     }
 
@@ -49,7 +55,7 @@ export function registerRoutesProxy(app: Express) {
         signal: AbortSignal.timeout(20000),
         headers: {
           "Content-Type": "application/json",
-          "X-Goog-Api-Key": ENV.googleMapsApiKey,
+          "X-Goog-Api-Key": apiKey,
           "X-Goog-FieldMask": "routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline,routes.legs.distanceMeters,routes.legs.polyline.encodedPolyline",
         },
         body: JSON.stringify({

@@ -753,13 +753,14 @@ export default function Home() {
                   follow={followBus}
                   darkMode={darkMode}
                   onBusClick={(route) => handleSelectRouteByName(route)}
-                  routePath={roadGeometry?.path}
-                  routePaths={partialRoutePaths.length ? partialRoutePaths : undefined}
+                  routePath={roadGeometry?.path || (routeGeoData.path.length >= 2 ? routeGeoData.path : undefined)}
+                  routePaths={partialRoutePaths.length ? partialRoutePaths : routeGeoData.path.length >= 2 ? [routeGeoData.path] : undefined}
+                  routeColor="#1a73e8"
                   stopMarkers={routeGeoData.stopMarkers}
                   activeStop={focusedStop}
                   onStopClick={(stop) => setFocusedStop(stop)}
                   travelledMeters={simulationView.travelledMeters}
-                  simulationRuntime={roadGeometry ? simulationRuntimeRef : undefined}
+                  simulationRuntime={simulationRuntimeRef}
                 />
 
                 {/* Selected Route Top Banner */}

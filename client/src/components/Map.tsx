@@ -1,6 +1,6 @@
 /// <reference types="@types/google.maps" />
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import type { RefObject } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -29,6 +29,7 @@ export type GoogleBusPoint = {
 export type { StopMarker };
 
 const STORAGE_KEY = "smart_bus_gmaps_key";
+const ROUTE_BLUE = "#1a73e8"; // Google Transit Blue
 
 export function getActiveGoogleMapsKey(): string | undefined {
   if (typeof window === "undefined") return undefined;
@@ -96,7 +97,7 @@ function LeafletKolkataMap({
   routePath,
   routePaths,
   stopMarkers,
-  routeColor = "#45d9d0",
+  routeColor = ROUTE_BLUE,
   activeStop,
   onStopClick,
   travelledMeters = 0,
@@ -126,6 +127,18 @@ function LeafletKolkataMap({
   const busMarkersLayerRef = useRef<L.LayerGroup | null>(null);
   const simulatedBusMarkerRef = useRef<L.Marker | null>(null);
   const userMarkerRef = useRef<L.Marker | null>(null);
+
+  const onStopClickRef = useRef(onStopClick);
+  onStopClickRef.current = onStopClick;
+
+  const onBusClickRef = useRef(onBusClick);
+  onBusClickRef.current = onBusClick;
+
+  // Stable stop markers signature to prevent blinking
+  const stopsSignature = useMemo(() => {
+    if (!stopMarkers || !stopMarkers.length) return "";
+    return stopMarkers.map((s) => `${s.label}:${s.coord.lat.toFixed(4)},${s.coord.lng.toFixed(4)}`).join("|");
+  }, [stopMarkers]);
 
   // Initialize Leaflet map
   useEffect(() => {
@@ -160,7 +173,7 @@ function LeafletKolkataMap({
     };
   }, [darkMode]);
 
-  // Handle route polylines
+  // Handle route polylines (Solid Blue line)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -181,20 +194,30 @@ function LeafletKolkataMap({
       const latLngs = path.map((pt) => [pt.lat, pt.lng] as [number, number]);
       latLngs.forEach((pt) => latLngBounds.extend(pt));
 
-      const poly = L.polyline(latLngs, {
-        color: routeColor || "#45d9d0",
-        weight: 6,
-        opacity: 0.92,
+      // Outer glow for premium look
+      const glow = L.polyline(latLngs, {
+        color: routeColor || ROUTE_BLUE,
+        weight: 9,
+        opacity: 0.35,
         lineCap: "round",
         lineJoin: "round",
       }).addTo(map);
+      polylinesRef.current.push(glow);
 
+      // Core Solid Blue route line
+      const poly = L.polyline(latLngs, {
+        color: routeColor || ROUTE_BLUE,
+        weight: 5,
+        opacity: 1.0,
+        lineCap: "round",
+        lineJoin: "round",
+      }).addTo(map);
       polylinesRef.current.push(poly);
     });
 
     if (routePath && routePath.length >= 2) {
       travelledPolylineRef.current = L.polyline([], {
-        color: "#ffffff",
+        color: "#38bdf8",
         weight: 6,
         opacity: 0.95,
         lineCap: "round",
@@ -215,7 +238,7 @@ function LeafletKolkataMap({
     travelledPolylineRef.current.setLatLngs(latLngs.length > 1 ? latLngs : []);
   }, [routePath, travelledMeters]);
 
-  // Handle stop markers
+  // Handle stop markers (rendered ONCE per route selection to completely avoid blinking)
   useEffect(() => {
     const group = stopMarkersLayerRef.current;
     if (!group) return;
@@ -226,11 +249,14 @@ function LeafletKolkataMap({
     stopMarkers.forEach((stop) => {
       const isOrigin = stop.kind === "origin";
       const isDest = stop.kind === "destination";
-      const color = isOrigin ? "#10b981" : isDest ? "#ff6b62" : "#45d9d0";
-      const size = isOrigin || isDest ? 16 : 10;
-      const border = isOrigin || isDest ? "2.5px solid #fff" : "2px solid #07121f";
+      const color = isOrigin ? "#10b981" : isDest ? "#ef4444" : "#2563eb";
+      const size = isOrigin || isDest ? 16 : 11;
+      const border = isOrigin || isDest ? "2.5px solid #ffffff" : "2px solid #ffffff";
+      const shadow = isOrigin || isDest
+        ? "0 0 0 3px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.4)"
+        : "0 0 0 2px rgba(37,99,235,0.4), 0 2px 6px rgba(0,0,0,0.3)";
 
-      const html = `<div style="width:${size}px; height:${size}px; border-radius:50%; background:${color}; border:${border}; box-shadow:0 0 0 3px ${color}55, 0 3px 8px rgba(0,0,0,0.4); cursor:pointer;"></div>`;
+      const html = `<div style="width:${size}px; height:${size}px; border-radius:50%; background:${color}; border:${border}; box-shadow:${shadow}; cursor:pointer;"></div>`;
 
       const icon = L.divIcon({
         className: "leaflet-stop-pin",
@@ -256,12 +282,12 @@ function LeafletKolkataMap({
       );
 
       marker.on("click", () => {
-        onStopClick?.(stop);
+        onStopClickRef.current?.(stop);
       });
 
       group.addLayer(marker);
     });
-  }, [stopMarkers, onStopClick]);
+  }, [stopsSignature]); // Depend strictly on stopsSignature, eliminating function-identity-triggered blinking!
 
   // Focus active stop
   useEffect(() => {
@@ -302,7 +328,7 @@ function LeafletKolkataMap({
       });
 
       const marker = L.marker([v.lat, v.lng], { icon });
-      marker.on("click", () => onBusClick(v.route));
+      marker.on("click", () => onBusClickRef.current?.(v.route));
       group.addLayer(marker);
     });
 
@@ -328,7 +354,7 @@ function LeafletKolkataMap({
         mapRef.current.panTo([userLocation.lat, userLocation.lng]);
       }
     }
-  }, [vehicles, selectedRoute, showAll, userLocation, follow, onBusClick]);
+  }, [vehicles, selectedRoute, showAll, userLocation, follow]);
 
   // Simulated bus animation
   useEffect(() => {
@@ -401,7 +427,7 @@ export function GoogleKolkataMap({
   routePath,
   routePaths,
   stopMarkers,
-  routeColor,
+  routeColor = ROUTE_BLUE,
   activeStop,
   onStopClick,
   travelledMeters = 0,
@@ -426,7 +452,6 @@ export function GoogleKolkataMap({
 }) {
   const container = useRef<HTMLDivElement>(null);
   const [engine, setEngine] = useState<"google" | "leaflet">("leaflet");
-  const [googleLoadFailed, setGoogleLoadFailed] = useState(false);
   const [keyModalOpen, setKeyModalOpen] = useState(false);
   const [inputKey, setInputKey] = useState("");
   const [activeKey, setActiveKey] = useState<string | undefined>(getActiveGoogleMapsKey);
@@ -444,7 +469,18 @@ export function GoogleKolkataMap({
   const stopMarkersRef = useRef<any[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
-  // Attempt Google Maps initialization if API key is present or on request
+  const onStopClickRef = useRef(onStopClick);
+  onStopClickRef.current = onStopClick;
+
+  const onBusClickRef = useRef(onBusClick);
+  onBusClickRef.current = onBusClick;
+
+  const stopsSignature = useMemo(() => {
+    if (!stopMarkers || !stopMarkers.length) return "";
+    return stopMarkers.map((s) => `${s.label}:${s.coord.lat.toFixed(4)},${s.coord.lng.toFixed(4)}`).join("|");
+  }, [stopMarkers]);
+
+  // Attempt Google Maps initialization if API key is present
   const initGoogleMaps = useCallback(async (key?: string) => {
     try {
       const g = await loadGoogleMaps(key);
@@ -473,12 +509,10 @@ export function GoogleKolkataMap({
       mapRef.current = map;
       setMapReady(true);
       setEngine("google");
-      setGoogleLoadFailed(false);
       trafficRef.current = new g.maps.TrafficLayer();
       transitRef.current = new g.maps.TransitLayer();
       onReady?.(map);
     } catch {
-      setGoogleLoadFailed(true);
       setEngine("leaflet");
     }
   }, [darkMode, onReady]);
@@ -489,7 +523,6 @@ export function GoogleKolkataMap({
     if (key) {
       initGoogleMaps(key);
     } else {
-      // Default to high-performance interactive Leaflet map
       setEngine("leaflet");
     }
   }, [initGoogleMaps]);
@@ -541,7 +574,7 @@ export function GoogleKolkataMap({
       content.className = `google-bus-marker ${(vehicle.speed ?? 0) <= 1 ? "stopped" : "moving"}`;
       content.innerHTML = `<span>🚌</span><b>${vehicle.route}</b>`;
       content.title = `${vehicle.route} ${(vehicle.speed ?? 0) <= 1 ? "stopped" : "live"}`;
-      content.addEventListener("click", () => onBusClick(vehicle.route));
+      content.addEventListener("click", () => onBusClickRef.current?.(vehicle.route));
 
       const Marker = (g.maps.marker as any)?.AdvancedMarkerElement;
       if (Marker) {
@@ -559,7 +592,7 @@ export function GoogleKolkataMap({
           label: vehicle.route,
           title: vehicle.route,
         });
-        marker.addListener("click", () => onBusClick(vehicle.route));
+        marker.addListener("click", () => onBusClickRef.current?.(vehicle.route));
         markersRef.current.push(marker);
       }
     });
@@ -580,9 +613,9 @@ export function GoogleKolkataMap({
       }
       if (follow) map.panTo(userLocation);
     }
-  }, [engine, vehicles, selectedRoute, showAll, userLocation, follow, onBusClick]);
+  }, [engine, vehicles, selectedRoute, showAll, userLocation, follow]);
 
-  // Google Maps Route Polyline
+  // Google Maps Route Polyline (Solid Transit Blue line)
   useEffect(() => {
     const map = mapRef.current;
     if (engine !== "google" || !map || !window.google?.maps) return;
@@ -602,8 +635,8 @@ export function GoogleKolkataMap({
         (path) =>
           new g.maps.Polyline({
             path,
-            strokeColor: "#1a73e8",
-            strokeOpacity: 0.92,
+            strokeColor: routeColor || ROUTE_BLUE,
+            strokeOpacity: 0.95,
             strokeWeight: 6,
             geodesic: true,
             zIndex: 10,
@@ -614,7 +647,7 @@ export function GoogleKolkataMap({
     if (routePath && routePath.length >= 2) {
       travelledPolylineRef.current = new g.maps.Polyline({
         path: [],
-        strokeColor: "#55e4dc",
+        strokeColor: "#38bdf8",
         strokeOpacity: 1,
         strokeWeight: 6,
         geodesic: true,
@@ -635,7 +668,7 @@ export function GoogleKolkataMap({
     travelledPolylineRef.current.setPath(progress.length > 1 ? progress : []);
   }, [engine, routePath, travelledMeters]);
 
-  // Google Maps Stop Markers
+  // Google Maps Stop Markers (stable signature, no blinking)
   useEffect(() => {
     const map = mapRef.current;
     if (engine !== "google" || !map || !window.google?.maps) return;
@@ -661,7 +694,7 @@ export function GoogleKolkataMap({
           ? "🎯 Final Terminal"
           : `🚏 Stoppage #${(stop.index ?? 0) + 1}`;
       const roleColor =
-        stop.kind === "origin" ? "#059669" : stop.kind === "destination" ? "#e11d48" : "#0284c7";
+        stop.kind === "origin" ? "#10b981" : stop.kind === "destination" ? "#ef4444" : "#2563eb";
 
       infoWindowRef.current.setContent(
         `<div style="font-family:'DM Sans',sans-serif;padding:6px 8px;color:#07121f;font-size:12px;min-width:140px;">
@@ -671,7 +704,7 @@ export function GoogleKolkataMap({
       );
       infoWindowRef.current.setPosition(markerPos);
       infoWindowRef.current.open(map);
-      onStopClick?.(stop);
+      onStopClickRef.current?.(stop);
     };
 
     stopMarkers.forEach((stop) => {
@@ -691,7 +724,7 @@ export function GoogleKolkataMap({
         m.addListener("click", () => showInfoWindowForStop(stop, stop.coord));
         stopMarkersRef.current.push(m);
       } else {
-        const pinColor = stop.kind === "origin" ? "#10b981" : stop.kind === "destination" ? "#ff6b62" : "#45d9d0";
+        const pinColor = stop.kind === "origin" ? "#10b981" : stop.kind === "destination" ? "#ef4444" : "#2563eb";
         const m = new (g.maps as any).Marker({
           map,
           position: stop.coord,
@@ -709,7 +742,7 @@ export function GoogleKolkataMap({
         stopMarkersRef.current.push(m);
       }
     });
-  }, [engine, stopMarkers, onStopClick]);
+  }, [engine, stopsSignature]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
