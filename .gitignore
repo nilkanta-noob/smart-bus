@@ -115,3 +115,5 @@ client/public/__manus__/version.json
 .project-config.json
 
 .env*
+!.env.example
+
