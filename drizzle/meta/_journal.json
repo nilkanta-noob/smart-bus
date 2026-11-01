@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1790587103749,
+      "tag": "0000_fat_crusher_hogan",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1790598117085,
+      "tag": "0001_green_stranger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1793533677012,
+      "tag": "0002_guest_groups",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,621 @@
+# WBTC stop resolution audit
+
+Generated: 2026-11-01T13:09:14.086Z
+
+## Inventory
+
+- WBTC route records: 131
+- Unique normalized stoppage names: 806
+- Verified coordinates: 104
+- Cached coordinates awaiting verification: 183
+- Unresolved coordinates: 519
+- Ambiguous results (subset of unresolved): 14
+- Multiple names sharing one coordinate (5 decimal places): 34
+- High-confidence Google geocodes stored in generated registry: 102
+- Accepted using Geocoding API v4: 46
+- Accepted using Places API (New): 56
+
+## Route 14A names requested for investigation
+
+- HMG College: present in corrected ordered route data; Google Geocoding and Places returned no confidently matching Kolkata result for HMG College.
+- Abestors More: present in corrected ordered route data; Google Geocoding and Places returned no confidently matching Kolkata result for Abestors More.
+- Ramnagar More: present in corrected ordered route data; Google Geocoding and Places returned no confidently matching Kolkata result for Ramnagar More.
+- J.K.Island: present in corrected ordered route data; verified coordinates
+- Jora Mandir: present in corrected ordered route data; Google returned multiple plausible Kolkata matches for Jora Mandir; this stop needs manual verification.
+- Beliaghata Main Road: present in corrected ordered route data; verified coordinates
+- Karunamoyee: present in corrected ordered route data; verified coordinates
+- Unnayan Bhavan: present in corrected ordered route data; verified coordinates
+
+## Methods and limits
+
+The resolver uses the existing `/api/maps/geocode-stop` proxy with the configured Maps Demo Key. It tries Google Geocoding API v4 first and falls back to Places API (New) when no confident unique result is available. Requests are region-biased to India and spatially biased to nearby known stops when available. Candidates outside the Kolkata/Howrah service bounds, weak name matches, and similarly ranked distant results are rejected. The batch has controlled concurrency, request spacing, timeout, retries, persistent per-stop progress, incremental generated registry output, and quota exhaustion handling.
+
+The current Maps Demo Key daily quota was exhausted during this run after 102 accepted stop results (46 via Geocoding API v4 and 56 via Places API New). The proxy returned a quota response but no numeric usage total. Ambiguous and unresolved names remain listed below for review and resumable lookup after quota reset. Manual coordinate table entries remain approximate waypoints and are never counted as Google verified. No coordinates are fabricated.
+
+## Ambiguous results
+
+- Baghajatin: Google returned multiple plausible Kolkata matches for Baghajatin; this stop needs manual verification.
+- Chria: Google returned multiple plausible Kolkata matches for Chria; this stop needs manual verification.
+- Fancy Market: Google returned multiple plausible Kolkata matches for Fancy Market; this stop needs manual verification.
+- Jora Mandir: Google returned multiple plausible Kolkata matches for Jora Mandir; this stop needs manual verification.
+- D.Park: Google returned multiple plausible Kolkata matches for D.Park; this stop needs manual verification.
+- Tolligunge Metro: Google returned multiple plausible Kolkata matches for Tolligunge Metro; this stop needs manual verification.
+- New Barrackpur B.T. College: Google returned multiple plausible Kolkata matches for New Barrackpur B.T. College; this stop needs manual verification.
+- Haldiram: Google returned multiple plausible Kolkata matches for Haldiram; this stop needs manual verification.
+- T.DEPOT: Google returned multiple plausible Kolkata matches for T.DEPOT; this stop needs manual verification.
+- MARINE COLLEGE: Google returned multiple plausible Kolkata matches for MARINE COLLEGE; this stop needs manual verification.
+- P A Sha Rd: Google returned multiple plausible Kolkata matches for P A Sha Rd; this stop needs manual verification.
+- RUBY: Google returned multiple plausible Kolkata matches for RUBY; this stop needs manual verification.
+- SWASTHA BHAVAN: Google returned multiple plausible Kolkata matches for SWASTHA BHAVAN; this stop needs manual verification.
+- COLLEGE MORE: Google returned multiple plausible Kolkata matches for COLLEGE MORE; this stop needs manual verification.
+
+## Verified alias groups
+
+- subodh mallick square: subod mallick square, subod mallick squre, subodh mallick sq, subodh malick square, subodh mullick square
+- esplanade: dharmatala, espl
+- bbd bag: bbd bagh, b b d bag, b b d bagh
+- ballygunge station: ballygunge stn
+- rashbehari: rashbehari xing, rashbehari avenue
+- girish park: grish park
+- baguiati: baguihati
+- kaikhali: koikhali, koikhali
+- chhingrighata: chingrighata, chingrihata
+
+## Unresolved results
+
+- Khidirpor: Google Geocoding and Places returned no confidently matching Kolkata result for Khidirpor.
+- Chria: Google returned multiple plausible Kolkata matches for Chria; this stop needs manual verification.
+- HMG College: Google Geocoding and Places returned no confidently matching Kolkata result for HMG College.
+- Abestors More: Google Geocoding and Places returned no confidently matching Kolkata result for Abestors More.
+- Ramnagar More: Google Geocoding and Places returned no confidently matching Kolkata result for Ramnagar More.
+- Jora Mandir: Google returned multiple plausible Kolkata matches for Jora Mandir; this stop needs manual verification.
+- D.Park: Google returned multiple plausible Kolkata matches for D.Park; this stop needs manual verification.
+- P.T.S: Google Geocoding and Places returned no confidently matching Kolkata result for P.T.S.
+- Tolligunge Metro: Google returned multiple plausible Kolkata matches for Tolligunge Metro; this stop needs manual verification.
+- Moninpor: Google Geocoding and Places returned no confidently matching Kolkata result for Moninpor.
+- Doltala: Google Geocoding and Places returned no confidently matching Kolkata result for Doltala.
+- New Barrackpur B.T. College: Google returned multiple plausible Kolkata matches for New Barrackpur B.T. College; this stop needs manual verification.
+- Bankra More: Google Geocoding and Places returned no confidently matching Kolkata result for Bankra More.
+- C.R. Avn. Xing: Google Geocoding and Places returned no confidently matching Kolkata result for C.R. Avn. Xing.
+- M.G.Road Xing: Google Geocoding and Places returned no confidently matching Kolkata result for M.G.Road Xing.
+- Khiddirpur: Google Geocoding and Places returned no confidently matching Kolkata result for Khiddirpur.
+- T.DEPOT: Google returned multiple plausible Kolkata matches for T.DEPOT; this stop needs manual verification.
+- MARINE COLLEGE: Google returned multiple plausible Kolkata matches for MARINE COLLEGE; this stop needs manual verification.
+- T.T.XING: Google Geocoding and Places returned no confidently matching Kolkata result for T.T.XING.
+- I: Google Geocoding and Places returned no confidently matching Kolkata result for I.
+- P A Sha Rd: Google returned multiple plausible Kolkata matches for P A Sha Rd; this stop needs manual verification.
+- Cancer Hospital: Not processed yet
+- RAIPUR CLUB: Not processed yet
+- CHAKRABERIA: Not processed yet
+- BIRLA TARAMONDAL: Not processed yet
+- TOLLYGUNJ PHARI: Not processed yet
+- T.T.DEPOT: Not processed yet
+- BELIAGHATA CON.: Not processed yet
+- E M Byepass: Not processed yet
+- New Town (Sapoorji): Not processed yet
+- ZOO: Not processed yet
+- MISSION ROW XING: Not processed yet
+- Shibanipit: Not processed yet
+- Malancha Bazar: Not processed yet
+- Mission Gate: Not processed yet
+- Kamalgazi More: Not processed yet
+- KBKC More: Not processed yet
+- Karunamoyee (Salt Lake): Not processed yet
+- BT Road: Not processed yet
+- Daber More: Not processed yet
+- Belghoria Exp. Way: Not processed yet
+- Lake Town (Jaya Cinema): Not processed yet
+- Kadapara: Not processed yet
+- Beliaghata Xing.: Not processed yet
+- Behala Chowrastha: Not processed yet
+- James long Sarani: Not processed yet
+- Ramkrishna Ashram: Not processed yet
+- Motilal Gupta Road: Not processed yet
+- Siriti More: Not processed yet
+- Rubi Hospital: Not processed yet
+- V.I.P.Road: Not processed yet
+- SASTHYABHAVAN: Not processed yet
+- HOME TOWN: Not processed yet
+- NABADIGANTA MORE: Not processed yet
+- C.C: Not processed yet
+- 2: Not processed yet
+- AIRPORT GATE NO.: Not processed yet
+- 3.: Not processed yet
+- Dum Dum 11A Stand: Not processed yet
+- Nager Bazar: Not processed yet
+- Chiner Park: Not processed yet
+- Akhankha More: Not processed yet
+- Jatragachi: Not processed yet
+- New Town Central Stand: Not processed yet
+- Wipro.: Not processed yet
+- ESPLANADE EAST: Not processed yet
+- COLUTALA XING: Not processed yet
+- M.G.RD.: Not processed yet
+- 1.: Not processed yet
+- Jessor Road: Not processed yet
+- Laketown Xing.: Not processed yet
+- Patipukur: Not processed yet
+- M.G. Road: Not processed yet
+- SALIMPUR: Not processed yet
+- SAPUIPARA KALIKAPUR: Not processed yet
+- EM BYEPASS: Not processed yet
+- NICCO PK: Not processed yet
+- C.C.2: Not processed yet
+- AIRPORT PORT GATE NO.3.: Not processed yet
+- Swasthya Bhawan: Not processed yet
+- E.M.Bye Pass: Not processed yet
+- VIP Road: Not processed yet
+- Durganagar: Not processed yet
+- Pailan: Not processed yet
+- Khidirpore: Not processed yet
+- Carzon Park: Not processed yet
+- Kasba PS: Not processed yet
+- Bosepukur: Not processed yet
+- Uttar Panchannagram: Not processed yet
+- Chowbaga: Not processed yet
+- Bantala Bazar: Not processed yet
+- Leather Complex: Not processed yet
+- Kantatala: Not processed yet
+- Paglarhat: Not processed yet
+- Borali Ghat: Not processed yet
+- Nalmuri: Not processed yet
+- Babughat: Not processed yet
+- Princep Ghat: Not processed yet
+- Babubazar: Not processed yet
+- BNR More: Not processed yet
+- Muduali: Not processed yet
+- Kachhi sarab: Not processed yet
+- Garden Reach: Not processed yet
+- Ramnagar: Not processed yet
+- Fatehpur: Not processed yet
+- Dackbanglow More: Not processed yet
+- B.T. Colleg: Not processed yet
+- Airpport: Not processed yet
+- Narkelbagn: Not processed yet
+- Sec5: Not processed yet
+- Rashbihari: Not processed yet
+- Rabindra Tirtha: Not processed yet
+- Nababpur: Not processed yet
+- Nimta: Not processed yet
+- College Street: Not processed yet
+- Shibanipith: Not processed yet
+- Baruipur Hospital: Not processed yet
+- Baruipur Station: Not processed yet
+- Khasmallick: Not processed yet
+- Rajpur Bazar: Not processed yet
+- Narendrapur: Not processed yet
+- Patuli More: Not processed yet
+- Ajaynagar: Not processed yet
+- EM Bypass: Not processed yet
+- Mukundapur: Not processed yet
+- VIP Bazar. Uttar Panchannagram: Not processed yet
+- 4no. Bridge: Not processed yet
+- Chittaranjan Hospital: Not processed yet
+- CIT Road: Not processed yet
+- Sodepur Girja: Not processed yet
+- Kamarhati: Not processed yet
+- Rathtala More: Not processed yet
+- Dunlop More: Not processed yet
+- Bonhooghly: Not processed yet
+- Tobin Road: Not processed yet
+- Sinthee More: Not processed yet
+- Chiria More: Not processed yet
+- Rajballavpara: Not processed yet
+- Barrackpore Chiria More: Not processed yet
+- Barrackpore Station: Not processed yet
+- Subhash Colony: Not processed yet
+- Wireless More: Not processed yet
+- Mohanpur: Not processed yet
+- Debpukur: Not processed yet
+- Chapuria: Not processed yet
+- Mathrangi: Not processed yet
+- Nilgunge: Not processed yet
+- Rangapur: Not processed yet
+- Kokapur: Not processed yet
+- Jagannathpur: Not processed yet
+- Barbaria: Not processed yet
+- Bally Ghat: Not processed yet
+- Belurmath: Not processed yet
+- Toll Tax: Not processed yet
+- College ghat: Not processed yet
+- D. Sekh Lane: Not processed yet
+- Bishnupur: Not processed yet
+- Khariberia: Not processed yet
+- Bhasha 14no.: Not processed yet
+- Joka Bridge: Not processed yet
+- Shilpara: Not processed yet
+- Sakher Bazar: Not processed yet
+- Majherhat: Not processed yet
+- Mominpore: Not processed yet
+- Ekbalpur: Not processed yet
+- BT College: Not processed yet
+- Mickelnagar: Not processed yet
+- Airport 1 No. Gate: Not processed yet
+- Bank of India: Not processed yet
+- Bowbazar: Not processed yet
+- Central Avenue: Not processed yet
+- GPO: Not processed yet
+- Stand Road: Not processed yet
+- Guma: Not processed yet
+- Bira: Not processed yet
+- Duttapukur: Not processed yet
+- Airport 1no: Not processed yet
+- Watgangemore: Not processed yet
+- Sakherbajar: Not processed yet
+- 3A Bus Stand: Not processed yet
+- Pilan: Not processed yet
+- Kheriberia: Not processed yet
+- Rajarhat: Not processed yet
+- Tahelarampur bazar: Not processed yet
+- Amratal: Not processed yet
+- Magurkhali Bridge: Not processed yet
+- Dhamua: Not processed yet
+- Basundharia: Not processed yet
+- Suryapur: Not processed yet
+- Ranabelia ghat: Not processed yet
+- Barasat/ Ecospace: Not processed yet
+- Airport 1 No.: Not processed yet
+- Aliah: Not processed yet
+- Ecospace: Not processed yet
+- Sector 5: Not processed yet
+- Jdavpur: Not processed yet
+- Anwar Shah Road: Not processed yet
+- Hazra Crossing: Not processed yet
+- Carryroad: Not processed yet
+- Belepole: Not processed yet
+- Kona Express: Not processed yet
+- NH6: Not processed yet
+- Salap: Not processed yet
+- B. T. College: Not processed yet
+- EM Byapss: Not processed yet
+- Belaghata: Not processed yet
+- Chinghreeghata: Not processed yet
+- Gariahgat: Not processed yet
+- Lake Kali Bari: Not processed yet
+- RB Avenue: Not processed yet
+- Khiderpur: Not processed yet
+- Nilgunge Depot: Not processed yet
+- Lalkuthi: Not processed yet
+- BKP: Not processed yet
+- Chiriamore: Not processed yet
+- Talpukur: Not processed yet
+- Titagarh P.S.: Not processed yet
+- Khardha: Not processed yet
+- Sukchar Manument: Not processed yet
+- Panihati: Not processed yet
+- Rathtala: Not processed yet
+- SinthiMore: Not processed yet
+- Gray St.: Not processed yet
+- Vivekananda Rd.: Not processed yet
+- MG Rd.: Not processed yet
+- Satya Narayan Park: Not processed yet
+- Mickel Nagar: Not processed yet
+- Kankugachi: Not processed yet
+- Rabinrasadan: Not processed yet
+- Carry Road: Not processed yet
+- Belepore: Not processed yet
+- Karidanga: Not processed yet
+- Paglahat: Not processed yet
+- Baralighat: Not processed yet
+- Chandipur: Not processed yet
+- Bhushighata: Not processed yet
+- Bamanpukur: Not processed yet
+- Joypur: Not processed yet
+- Chaital: Not processed yet
+- Battala: Not processed yet
+- Nimchabari: Not processed yet
+- Dackbalglow More: Not processed yet
+- Kantala: Not processed yet
+- Karaidanga: Not processed yet
+- Bodra: Not processed yet
+- Champahati: Not processed yet
+- NH: Not processed yet
+- 6 Crossing: Not processed yet
+- Salap More: Not processed yet
+- Makardaha: Not processed yet
+- Domjur: Not processed yet
+- Rajapur: Not processed yet
+- Dakshinbari: Not processed yet
+- Bargachia: Not processed yet
+- Kalitala bazar: Not processed yet
+- Ichanagari: Not processed yet
+- Jagatballavpur: Not processed yet
+- Dilakhash: Not processed yet
+- Minto Park: Not processed yet
+- Wipro More: Not processed yet
+- DLF 1: Not processed yet
+- Mathpukur: Not processed yet
+- SDF More: Not processed yet
+- Axis Mall: Not processed yet
+- Unitech Gate 2: Not processed yet
+- DLF 2: Not processed yet
+- Madhyamgram Chowrasta: Not processed yet
+- Airport Gate 1: Not processed yet
+- Adibasi Bhavan.: Not processed yet
+- Betore More: Not processed yet
+- Toll Plaza: Not processed yet
+- Topsia Road Xing: Not processed yet
+- Swastha Bhawan: Not processed yet
+- Technopolish: Not processed yet
+- Raja Rammohan Roy Rd.: Not processed yet
+- Behala P.S: Not processed yet
+- Kidderpore: Not processed yet
+- Mint: Not processed yet
+- Gopalnagar: Not processed yet
+- S.C.Mallick Square: Not processed yet
+- Canal Bridge(East): Not processed yet
+- Beliaghata: Not processed yet
+- CITRd. Xing: Not processed yet
+- Kestor More: Not processed yet
+- Khudiram Park (Sarsuna): Not processed yet
+- Panchanantala: Not processed yet
+- Muchipara Xing: Not processed yet
+- Tollygunge Metro Stn.: Not processed yet
+- Rashbehari Avn.: Not processed yet
+- Sealdah (Rajabazar T.D. ): Not processed yet
+- Roy Bahadur Road: Not processed yet
+- Burashibtala Main Road: Not processed yet
+- New Alipore Petrol Pump: Not processed yet
+- C.I.T. Road Xing: Not processed yet
+- Ananda Palit: Not processed yet
+- College Street Xing: Not processed yet
+- Bura Bazar: Not processed yet
+- Chitpur Crossing: Not processed yet
+- Chandi Ghosh Rd.: Not processed yet
+- Thakurpukur 3A Bus Stand: Not processed yet
+- Thakurpukur Bazar: Not processed yet
+- Silpara: Not processed yet
+- Chourasta: Not processed yet
+- Menton: Not processed yet
+- Taratala More: Not processed yet
+- Mouminpur: Not processed yet
+- Water Gate: Not processed yet
+- B.B.Ganguly St.: Not processed yet
+- Sealdh.: Not processed yet
+- BBD.BAGB.B.Ganguli St.Sealdah: Not processed yet
+- Phoolbagn: Not processed yet
+- Thakurpukur 3A Stand: Not processed yet
+- Sakhar Bazar: Not processed yet
+- Behala Chorasta: Not processed yet
+- RB Av xing: Not processed yet
+- Kasba P.S: Not processed yet
+- Science City Chingrighata: Not processed yet
+- Techopolic: Not processed yet
+- Ecispace: Not processed yet
+- Aliah Univercity.: Not processed yet
+- Kasba Depot Gate: Not processed yet
+- Chingri Ghata: Not processed yet
+- PNB: Not processed yet
+- Quality.: Not processed yet
+- Rashbehari Avenue Xing: Not processed yet
+- P.A.Sh Rd: Not processed yet
+- Lords Beckary: Not processed yet
+- Jadavpur PS: Not processed yet
+- New Town Bus Stand: Not processed yet
+- S.Ave: Not processed yet
+- Elgin Rd.: Not processed yet
+- Ranikuthi: Not processed yet
+- Tollygunge T.Depot: Not processed yet
+- Santoshpur: Not processed yet
+- VIP. Nagar: Not processed yet
+- Since City: Not processed yet
+- Metro politon Hou. Est.: Not processed yet
+- EM ByPass Connector: Not processed yet
+- Tobin Rd.: Not processed yet
+- Sinthi More: Not processed yet
+- Colutala St.: Not processed yet
+- C.R.Ave: Not processed yet
+- Ruby Xing: Not processed yet
+- V.I.P. Bazar: Not processed yet
+- Philips: Not processed yet
+- DLF: Not processed yet
+- Tata Medical Centre: Not processed yet
+- Airport 3 no. gate: Not processed yet
+- Central Jail: Not processed yet
+- Paikpara Xing: Not processed yet
+- Shyam Bazar: Not processed yet
+- Grey Street: Not processed yet
+- Colutala Street: Not processed yet
+- BB Ganguly Xing: Not processed yet
+- Parkstreet: Not processed yet
+- BKP Chiriamore: Not processed yet
+- Kalutala: Not processed yet
+- BB Ganguly St.: Not processed yet
+- SLD Gate: Not processed yet
+- Weble House: Not processed yet
+- Chinrighata: Not processed yet
+- EMBypass: Not processed yet
+- Ranirashmoni Bazar: Not processed yet
+- S.Mullick Sq.: Not processed yet
+- Khiddirpor: Not processed yet
+- Howrah Station to: Not processed yet
+- Paribesh Bhavan: Not processed yet
+- K.B.K.C.: Not processed yet
+- Panchayat Bhawa: Not processed yet
+- Tank No. 16: Not processed yet
+- Techno India: Not processed yet
+- Malanch More.: Not processed yet
+- Hiland Willow/ Picnic Park: Not processed yet
+- Dinobandhu Andrews College: Not processed yet
+- Bldg. More: Not processed yet
+- C.A.Island: Not processed yet
+- Labony: Not processed yet
+- Seva Hospital: Not processed yet
+- Baisaki: Not processed yet
+- Bhavan: Not processed yet
+- Alambazar: Not processed yet
+- Baghajatin Rd.: Not processed yet
+- Baranagar Bazar: Not processed yet
+- Bibir Bazar: Not processed yet
+- Cossipur: Not processed yet
+- Bag Bazar: Not processed yet
+- M.G.Road Jn.: Not processed yet
+- Hazra Rd.: Not processed yet
+- Chandi Ghosh: Not processed yet
+- Kudghat.: Not processed yet
+- Bagbazar: Not processed yet
+- Pearless Hospital: Not processed yet
+- Patuli P.S: Not processed yet
+- Raidighi: Not processed yet
+- Nutan Para: Not processed yet
+- Rubi: Not processed yet
+- WIPRO Xing: Not processed yet
+- Balihalt: Not processed yet
+- Balikhal: Not processed yet
+- Nimtala: Not processed yet
+- Sreenagar: Not processed yet
+- 3 No. Gate: Not processed yet
+- City Center: Not processed yet
+- Nabadiganta: Not processed yet
+- More: Not processed yet
+- Ne: Not processed yet
+- SLD.: Not processed yet
+- Arabinda Pally: Not processed yet
+- Panchanan Gram: Not processed yet
+- Topsia Rd. Xing: Not processed yet
+- Lohapoll: Not processed yet
+- Middle Rd.: Not processed yet
+- S.N.Banarjee Rd.: Not processed yet
+- Ultadanga 15 No.Bus Stand: Not processed yet
+- SDFCollege More: Not processed yet
+- Hidco Bhavan: Not processed yet
+- Ultadanga - Salt Lake-Ultadanga: Not processed yet
+- 4 No. Tank: Not processed yet
+- Ramkrishna Mission: Not processed yet
+- C.G.O. Complex: Not processed yet
+- Purta Bhawan: Not processed yet
+- Unnayan Bhawan: Not processed yet
+- Kanunamoyee: Not processed yet
+- Lock Gate: Not processed yet
+- R.S. Software: Not processed yet
+- SDG: Not processed yet
+- Police Camp: Not processed yet
+- G.D. Island: Not processed yet
+- Falguni: Not processed yet
+- Vidyasagar Island: Not processed yet
+- Circuitous Service: Not processed yet
+- Chowrastha: Not processed yet
+- Motilal Gupta Rd.: Not processed yet
+- D.P.Sasmal Rd.: Not processed yet
+- Barrackpore Court: Not processed yet
+- Bakrakpur College: Not processed yet
+- Barakpur Chiriamore: Not processed yet
+- Khardha Bazar: Not processed yet
+- Dunlop Bridge: Not processed yet
+- Ranindra Sarani: Not processed yet
+- Vivekananda Bridge: Not processed yet
+- Bally Bazar: Not processed yet
+- Municipality: Not processed yet
+- Salkia Chowrastha: Not processed yet
+- Barrackpur Court: Not processed yet
+- Nilgunge Bazar: Not processed yet
+- Kazibari More: Not processed yet
+- Narayanpur More.: Not processed yet
+- W. B. State University (Barasat): Not processed yet
+- Kazibari: Not processed yet
+- Barrackpore Stn: Not processed yet
+- Sinthee: Not processed yet
+- DumDum Chiria More: Not processed yet
+- DumDum Stn.: Not processed yet
+- Champadali More: Not processed yet
+- Barasat Depot: Not processed yet
+- Kazipara.: Not processed yet
+- ALIPORE ZOO: Not processed yet
+- Jeevan Deep: Not processed yet
+- Welington Sq.: Not processed yet
+- R.G.KAR Hospital: Not processed yet
+- Santoshpur Stn.: Not processed yet
+- Paharpur: Not processed yet
+- Nature's Park: Not processed yet
+- Taratala Depot: Not processed yet
+- Sahapur P.Pump: Not processed yet
+- RB Avenue xing: Not processed yet
+- Bijan Setu: Not processed yet
+- Paribesh Bhaban: Not processed yet
+- Eden City Gate: Not processed yet
+- Nungimore: Not processed yet
+- Batamore: Not processed yet
+- Jalkol: Not processed yet
+- Rampur: Not processed yet
+- Jingirabazar: Not processed yet
+- Momonpore: Not processed yet
+- Behala Airport: Not processed yet
+- Sabeda Bagan: Not processed yet
+- Sinthi: Not processed yet
+- C.R. Avenue: Not processed yet
+- Central Metro Stn.: Not processed yet
+- Mayo Road: Not processed yet
+- Tollplaza.: Not processed yet
+- Bidhannagar College: Not processed yet
+- Bhavans.: Not processed yet
+- Nayabad: Not processed yet
+- Nayabad Stand: Not processed yet
+- Garia STn.: Not processed yet
+- Panchasayar: Not processed yet
+- Peerless Hosp: Not processed yet
+- Pk St: Not processed yet
+- Budge Budge Hospital: Not processed yet
+- Charial: Not processed yet
+- Pujali CESC Plant.: Not processed yet
+- Khedderpur: Not processed yet
+- ITC More: Not processed yet
+- Metiabruz S.S. Hospital: Not processed yet
+- Santoshpur Railway Gate: Not processed yet
+- Garden Reach Water Plant: Not processed yet
+- Jinjira Bazar: Not processed yet
+- Taratala State Garage: Not processed yet
+- Pathakpara.: Not processed yet
+- Behala 14 No. B.T.: Not processed yet
+- Naihati Bus Terminus: Not processed yet
+- Bhatpara: Not processed yet
+- Shyamnagar: Not processed yet
+- Hela Battala: Not processed yet
+- P.T.S. Danersekh Lane: Not processed yet
+- Podra: Not processed yet
+- Champatala: Not processed yet
+- Sankrail Station.: Not processed yet
+- Swastha Bhaban: Not processed yet
+- Kalkapur: Not processed yet
+- Tollygunge Karunamoyee: Not processed yet
+- Telecom: Not processed yet
+- Appolo Hospital: Not processed yet
+- Bengal Chemical: Not processed yet
+- Raghunathpur: Not processed yet
+- Grish park: Not processed yet
+
+## Duplicate coordinate groups
+
+- Khidderpur / Khiderpore / Khidirpur
+- Subod Mallick Squre / Subodh Mallick Square / Subodh Mullick Square
+- Howrah Bridge East / Howrah Bridge South.
+- Howrah Stn.. / Howrah
+- Manton Xing / Manton
+- B.B.D.Bag / BBD Bag
+- Hastings / Hestings
+- Ranikhuti / RANI KUTHI
+- Vidhya Sagar Satu / Vidyasagar Setu
+- Jadavpore / Jadavpur Thana
+- ESPL. / Dharmatala
+- Parnashri / Parnashree
+- RUBY / Ruby Hospital
+- SAPURJI. / Sapoorji / Sapoorjee
+- Haridevpur / Haridebpur
+- Rashbehari Xing. / RASHBEHARI AVE. / Rashbehari
+- New Town / Narkel Bagan / New Town Bus Terminus
+- AJOYNAGAR / Ajay Nagar / Ajoy Nagar
+- Sc. City / Science City
+- Topsia / Topsia More
+- Baruipur New Terminus / Baruipur
+- Peerless Hospital / PEERLESS
+- Sodpur / Sodepur
+- Barrackpore / Barrackpur
+- Ballyhalt. / Bally Halt
+- Rajchandrapur / Rajchandra- pur
+- Barrabazar. / Burrabazar / Burra Bazar
+- Airport / Air Port / Airport Terminal
+- Ballygunge Station / Ballygunge Stn. / Ballygunge
+- Ghatatkpukur / Ghatakpukur
+- H M Ghosh College / Metiabruz
+- Rajabazar / Rajabazar Tram Depot
+- Mandirtala / Madirtala
+- City Centre I / City Centre 1
