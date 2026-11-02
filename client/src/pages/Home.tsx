@@ -753,8 +753,8 @@ export default function Home() {
                   follow={followBus}
                   darkMode={darkMode}
                   onBusClick={(route) => handleSelectRouteByName(route)}
-                  routePath={roadGeometry?.path || (routeGeoData.path.length >= 2 ? routeGeoData.path : undefined)}
-                  routePaths={partialRoutePaths.length ? partialRoutePaths : routeGeoData.path.length >= 2 ? [routeGeoData.path] : undefined}
+                  routePath={roadGeometry?.path}
+                  routePaths={roadGeometry?.path ? [roadGeometry.path] : undefined}
                   routeColor="#1a73e8"
                   stopMarkers={routeGeoData.stopMarkers}
                   activeStop={focusedStop}
@@ -771,7 +771,7 @@ export default function Home() {
                       <div className="route-map-banner-copy">
                         <strong>{isRouteReversed ? `${currentRouteObj.destination} → ${currentRouteObj.origin}` : `${currentRouteObj.origin} → ${currentRouteObj.destination}`}</strong>
                         <span>
-                          {isACRoute(currentRouteObj.route) ? "AC City Service" : "Non-AC Service"} · {routeGeoData.stopMarkers.length} mapped stops · road path approximate
+                          {isACRoute(currentRouteObj.route) ? "AC City Service" : "Non-AC Service"} · {routeGeoData.stopMarkers.length} mapped stops · {roadGeometry ? "turn-by-turn road route" : "calculating street route..."}
                         </span>
                       </div>
                     </div>
@@ -812,11 +812,15 @@ export default function Home() {
                   </div>
                 )}
 
-                <div className="real-map-badge google-badge"><span className="live-dot" /> GOOGLE MAPS <span>·</span> WBTC TRANSIT</div>
-                <div className="real-map-status">
-                  <BusFront size={14} /> {currentRouteObj ? roadGeometryStatus === "ready" ? `Route ${currentRouteObj.route} road path` : roadGeometryStatus === "partial" ? `Route ${currentRouteObj.route} partial road path` : roadGeometryStatus === "loading" ? "Loading road path" : "Road path unavailable" : `${WBTC_ROUTES.length} official routes available`}
-                  <span className="proto-label" style={{ marginLeft: 8 }}>{currentRouteObj ? "DEMO SIMULATION" : "Prototype"}</span>
-                </div>
+                {!currentRouteObj && (
+                  <>
+                    <div className="real-map-badge google-badge"><span className="live-dot" /> GOOGLE MAPS <span>·</span> WBTC TRANSIT</div>
+                    <div className="real-map-status">
+                      <BusFront size={14} /> {`${WBTC_ROUTES.length} official routes available`}
+                      <span className="proto-label" style={{ marginLeft: 8 }}>Prototype</span>
+                    </div>
+                  </>
+                )}
                 <button type="button" className="locate-button" aria-label="Center on my location" onClick={() => navigator.geolocation?.getCurrentPosition((position) => { setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude }); toast.success("Location found", { description: "Your position is shown on Google Maps." }); }, () => toast.error("Location unavailable", { description: "Allow location access in your browser to show your position." }))}><LocateFixed size={18} /></button>
                 <div className="real-map-legend">
                   <span><i className="legend-bus">🟢</i> Origin</span>

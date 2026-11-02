@@ -9,7 +9,7 @@ import type { LatLng, StopMarker } from "@/lib/kolkata-stops";
 import { positionAlongRoute, routePositionAtDistance } from "@/lib/route-geometry";
 import type { SimulationRuntime } from "@/lib/route-simulation";
 import { toast } from "sonner";
-import { KeyRound, Layers, MapPin, X, Check, ExternalLink } from "lucide-react";
+import { KeyRound, Layers, MapPin, X, Check, ExternalLink, Plus, Minus, Compass } from "lucide-react";
 
 declare global {
   interface Window {
@@ -110,6 +110,7 @@ function LeafletKolkataMap({
   follow,
   darkMode,
   onBusClick,
+  onReady,
   routePath,
   routePaths,
   stopMarkers,
@@ -126,6 +127,7 @@ function LeafletKolkataMap({
   follow: boolean;
   darkMode: boolean;
   onBusClick: (route: string) => void;
+  onReady?: (map: L.Map) => void;
   routePath?: LatLng[];
   routePaths?: LatLng[][];
   stopMarkers?: StopMarker[];
@@ -165,7 +167,12 @@ function LeafletKolkataMap({
       zoom: 12,
       minZoom: 10,
       maxZoom: 19,
-      zoomControl: true,
+      scrollWheelZoom: true,
+      touchZoom: true,
+      doubleClickZoom: true,
+      boxZoom: true,
+      dragging: true,
+      zoomControl: false,
       attributionControl: false,
     });
 
@@ -182,6 +189,7 @@ function LeafletKolkataMap({
     busMarkersLayerRef.current = L.layerGroup().addTo(map);
 
     mapRef.current = map;
+    onReady?.(map);
 
     return () => {
       map.remove();
@@ -473,6 +481,7 @@ export function GoogleKolkataMap({
   const [activeKey, setActiveKey] = useState<string | undefined>(getActiveGoogleMapsKey);
 
   const mapRef = useRef<google.maps.Map | null>(null);
+  const leafletMapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
   const trafficRef = useRef<google.maps.TrafficLayer | null>(null);
@@ -506,11 +515,16 @@ export function GoogleKolkataMap({
         center: { lat: 22.5726, lng: 88.3639 },
         zoom: 12,
         minZoom: 10,
-        maxZoom: 18,
+        maxZoom: 19,
+        gestureHandling: "greedy",
+        scrollwheel: true,
+        zoomControl: true,
+        zoomControlOptions: {
+          position: g.maps.ControlPosition.RIGHT_BOTTOM,
+        },
         mapTypeControl: false,
         streetViewControl: false,
-        fullscreenControl: true,
-        zoomControl: true,
+        fullscreenControl: false,
         clickableIcons: false,
         mapId: "DEMO_MAP_ID",
         styles: darkMode
@@ -815,6 +829,9 @@ export function GoogleKolkataMap({
           follow={follow}
           darkMode={darkMode}
           onBusClick={onBusClick}
+          onReady={(lMap) => {
+            leafletMapRef.current = lMap;
+          }}
           routePath={routePath}
           routePaths={routePaths}
           stopMarkers={stopMarkers}
@@ -865,6 +882,59 @@ export function GoogleKolkataMap({
         >
           <KeyRound size={13} />
           <span>{activeKey ? "Key Set" : "Add Key"}</span>
+        </button>
+      </div>
+
+      {/* Dedicated Floating Zoom & Recenter Stack */}
+      <div className="absolute bottom-20 right-3 z-30 flex flex-col items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => {
+            if (engine === "google" && mapRef.current) {
+              const current = mapRef.current.getZoom() ?? 12;
+              mapRef.current.setZoom(Math.min(current + 1, 19));
+            } else if (leafletMapRef.current) {
+              leafletMapRef.current.zoomIn();
+            }
+          }}
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-100 border border-slate-700/80 backdrop-blur-md shadow-lg transition active:scale-95"
+          title="Zoom In (+)"
+          aria-label="Zoom In"
+        >
+          <Plus size={15} />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            if (engine === "google" && mapRef.current) {
+              const current = mapRef.current.getZoom() ?? 12;
+              mapRef.current.setZoom(Math.max(current - 1, 10));
+            } else if (leafletMapRef.current) {
+              leafletMapRef.current.zoomOut();
+            }
+          }}
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-100 border border-slate-700/80 backdrop-blur-md shadow-lg transition active:scale-95"
+          title="Zoom Out (-)"
+          aria-label="Zoom Out"
+        >
+          <Minus size={15} />
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const center = { lat: 22.5726, lng: 88.3639 };
+            if (engine === "google" && mapRef.current) {
+              mapRef.current.setCenter(center);
+              mapRef.current.setZoom(12);
+            } else if (leafletMapRef.current) {
+              leafletMapRef.current.setView([center.lat, center.lng], 12);
+            }
+          }}
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-900/90 hover:bg-slate-800 text-cyan-400 border border-slate-700/80 backdrop-blur-md shadow-lg transition active:scale-95"
+          title="Recenter Kolkata"
+          aria-label="Recenter Map"
+        >
+          <Compass size={15} />
         </button>
       </div>
 

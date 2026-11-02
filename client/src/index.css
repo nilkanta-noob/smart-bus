@@ -322,7 +322,10 @@
 .route-stop-active { transform:scale(1.55) !important; box-shadow:0 0 0 6px rgba(67,143,255,.5), 0 4px 14px rgba(0,0,0,.55) !important; z-index:30 !important; }
 
 /* Route Map Overlay & Stop Sequence Panel */
-.route-map-banner { position:absolute; top:12px; left:12px; right:12px; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; background:rgba(7,18,31,.88); backdrop-filter:blur(14px); border:1px solid rgba(69,217,208,.25); border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+.route-map-banner { position:absolute; top:12px; left:12px; max-width:min(540px, calc(100% - 250px)); z-index:20; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 14px; background:rgba(7,18,31,.92); backdrop-filter:blur(14px); border:1px solid rgba(69,217,208,.25); border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+@media (max-width: 640px) {
+  .route-map-banner { top:52px; left:10px; right:10px; max-width:none; padding:8px 10px; }
+}
 .route-map-banner-info { display:flex; align-items:center; gap:10px; min-width:0; }
 .route-map-banner-token { padding:3px 9px; border-radius:8px; font:700 12px 'Sora'; color:#07121f; background:#45d9d0; letter-spacing:-.02em; flex-shrink:0; }
 .route-map-banner-copy { min-width:0; }

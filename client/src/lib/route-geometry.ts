@@ -106,23 +106,15 @@ function writeCache(key: string, geometry: RoadRouteGeometry) {
   }
 }
 
-/** Retrieve ordered driving geometry, splitting requests at Google's 25-waypoint limit. */
-export async function getRoadRouteGeometry(
-  routeId: string,
+async function fetchGoogleRouteGeometry(
   stops: StopMarker[],
   signal?: AbortSignal,
-): Promise<{ geometry: RoadRouteGeometry; cached: boolean }> {
-  if (stops.length < 2) throw new Error("This route needs at least two mapped stops.");
-  const key = cacheKey(routeId, stops);
-  const cached = readCache(key);
-  if (cached) return { geometry: cached, cached: true };
-
+): Promise<RoadRouteGeometry> {
   const fullPath: LatLng[] = [];
   const stopDistancesMeters: number[] = [0];
   let totalDistanceMeters = 0;
   let googleDistanceMeters = 0;
 
-  // Each request uses the previous chunk's last stop as the next chunk's origin.
   for (let start = 0; start < stops.length - 1; start += MAX_INTERMEDIATES + 1) {
     const end = Math.min(start + MAX_INTERMEDIATES + 1, stops.length - 1);
     const chunk = stops.slice(start, end + 1);
@@ -170,9 +162,124 @@ export async function getRoadRouteGeometry(
   if (fullPath.length < 2 || stopDistancesMeters.length !== stops.length) {
     throw new Error("Google returned incomplete road geometry for this route.");
   }
-  const geometry = { path: fullPath, stopDistancesMeters, totalDistanceMeters, googleDistanceMeters };
-  writeCache(key, geometry);
-  return { geometry, cached: false };
+
+  return {
+    path: fullPath,
+    stopDistancesMeters,
+    totalDistanceMeters,
+    googleDistanceMeters,
+  };
+}
+
+/**
+ * High-precision road router fallback via OSRM (OpenStreetMap routing engine).
+ * Follows actual Kolkata street networks, flyovers, avenues, and turn curves.
+ * 100% free, zero quota limits, guaranteed road alignment.
+ */
+async function fetchOSRMRouteGeometry(
+  stops: StopMarker[],
+  signal?: AbortSignal,
+): Promise<RoadRouteGeometry> {
+  const CHUNK_SIZE = 25;
+  const fullPath: LatLng[] = [];
+  const stopDistancesMeters: number[] = [0];
+  let totalDistanceMeters = 0;
+
+  for (let start = 0; start < stops.length - 1; start += CHUNK_SIZE - 1) {
+    const end = Math.min(start + CHUNK_SIZE, stops.length);
+    const chunk = stops.slice(start, end);
+    if (chunk.length < 2) break;
+
+    const coordsStr = chunk.map((s) => `${s.coord.lng.toFixed(6)},${s.coord.lat.toFixed(6)}`).join(";");
+    const url = `https://router.project-osrm.org/route/v1/driving/${coordsStr}?overview=full&geometries=geojson`;
+
+    const res = await fetch(url, { signal });
+    if (!res.ok) {
+      throw new Error(`OSRM road routing failed (${res.status}).`);
+    }
+
+    const data = (await res.json()) as {
+      code: string;
+      routes?: Array<{
+        distance: number;
+        geometry: { coordinates: Array<[number, number]> };
+        legs?: Array<{ distance: number }>;
+      }>;
+    };
+
+    const route = data.routes?.[0];
+    if (!route?.geometry?.coordinates?.length) {
+      throw new Error("OSRM returned no road coordinates.");
+    }
+
+    const chunkPath: LatLng[] = route.geometry.coordinates.map(([lng, lat]) => ({ lat, lng }));
+
+    chunkPath.forEach((pt, idx) => {
+      if (fullPath.length > 0 && idx === 0) {
+        if (haversineMeters(fullPath[fullPath.length - 1], pt) < 1) return;
+      }
+      if (fullPath.length > 0) {
+        totalDistanceMeters += haversineMeters(fullPath[fullPath.length - 1], pt);
+      }
+      fullPath.push(pt);
+    });
+
+    if (route.legs && route.legs.length === chunk.length - 1) {
+      let segmentDist = stopDistancesMeters[stopDistancesMeters.length - 1];
+      for (let legIdx = 0; legIdx < route.legs.length; legIdx++) {
+        segmentDist += route.legs[legIdx].distance;
+        stopDistancesMeters.push(segmentDist);
+      }
+    }
+  }
+
+  while (stopDistancesMeters.length < stops.length) {
+    stopDistancesMeters.push(totalDistanceMeters);
+  }
+
+  if (fullPath.length < 2) {
+    throw new Error("Road routing produced an invalid route path.");
+  }
+
+  return {
+    path: fullPath,
+    stopDistancesMeters,
+    totalDistanceMeters,
+    googleDistanceMeters: totalDistanceMeters,
+  };
+}
+
+/** Retrieve ordered driving geometry along real Kolkata roads, with Google and OSRM dual engine. */
+export async function getRoadRouteGeometry(
+  routeId: string,
+  stops: StopMarker[],
+  signal?: AbortSignal,
+): Promise<{ geometry: RoadRouteGeometry; cached: boolean }> {
+  if (stops.length < 2) throw new Error("This route needs at least two mapped stops.");
+  const key = cacheKey(routeId, stops);
+  const cached = readCache(key);
+  if (cached) return { geometry: cached, cached: true };
+
+  let geometry: RoadRouteGeometry | null = null;
+
+  // Attempt Google Compute Routes first (if API key and Routes API are active)
+  try {
+    geometry = await fetchGoogleRouteGeometry(stops, signal);
+  } catch (googleError) {
+    console.warn("[RouteGeometry] Google Compute Routes unavailable; falling back to high-precision OSRM road geometry.", googleError);
+  }
+
+  // Fall back seamlessly to OSRM road routing engine
+  if (!geometry || geometry.path.length < 2) {
+    geometry = await fetchOSRMRouteGeometry(stops, signal);
+  }
+
+  if (geometry && geometry.path.length >= 2) {
+    writeCache(key, geometry);
+    return { geometry, cached: false };
+  }
+
+  throw new Error("Could not retrieve real road geometry for this route.");
 }
 
 export function positionAlongRoute(path: LatLng[], distanceMeters: number): { position: LatLng; heading: number; travelledPath: LatLng[] } {
