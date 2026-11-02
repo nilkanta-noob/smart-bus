@@ -888,14 +888,14 @@ export const WBTC_ROUTES: WBTCRoute[] = [
     "route": "V1",
     "origin": "Tollygunge",
     "destination": "Airport",
-    "stops": "Rashbehari, Gariahat, Ballygunge Station, Ruby Hospital, Science City, Chingrighata, Ultadanga, Laketown, Kestopur, Baguiati, Tegharia, Kaikhali"
+    "stops": "Rashbehari, Gariahat, Ballygunge Station, Kasba Connector, Ruby Hospital, VIP Bazar, Science City, Chingrighata, Apollo Hospital, Mani Square, Ultadanga Hudco, Lake Town, Bangur, Kestopur, Baguiati, Raghunathpur, Tegharia, Kaikhali"
   },
   {
     "sl": 128,
     "route": "V-1 (L)",
     "origin": "Tollygunge",
     "destination": "Airport Terminal",
-    "stops": "Tollygunge Phari-Rashbehari Xing-Gariahat-Ruby-VIP Bazar-Science City-Chingrihata-Appolo Hospital-Bengal Chemical-HUDCO-Bangur-Raghunathpur-Kaikhali"
+    "stops": "Tollygunge Phari, Rashbehari, Gariahat, Bijon Setu, Kasba Connector, Ruby Hospital, VIP Bazar, Science City, Chingrighata, Apollo Hospital, Mani Square, Ultadanga Hudco, Lake Town, Bangur, Kestopur, Baguiati, Raghunathpur, Tegharia, Kaikhali"
   },
   {
     "sl": 129,

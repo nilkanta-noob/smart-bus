@@ -57,10 +57,10 @@ export const GENERATED_STOP_LOCATIONS: Record<string, { latitude: number; longit
     "source": "geocoding-v4"
   },
   "Ultadanga": {
-    "latitude": 22.5944516,
-    "longitude": 88.3835325,
+    "latitude": 22.5896,
+    "longitude": 88.3960,
     "placeId": "ChIJjQ8PABJ2AjoRxkbeL9t-EGw",
-    "formattedAddress": "Ultadanga, Kolkata, West Bengal, India",
+    "formattedAddress": "Ultadanga Hudco More, E.M. Bypass, Kolkata, West Bengal 700054",
     "confidence": 1,
     "source": "geocoding-v4"
   },
@@ -585,42 +585,42 @@ export const GENERATED_STOP_LOCATIONS: Record<string, { latitude: number; longit
     "source": "places-new"
   },
   "Airport Gate No. 1": {
-    "latitude": 22.641510999999998,
-    "longitude": 88.43087,
+    "latitude": 22.6465,
+    "longitude": 88.4470,
     "placeId": "ChIJi-acHUae-DkRTDgRFrbOW_E",
-    "formattedAddress": "Sonatikri, kolkata Airport Quarters, Dum Dum, West Bengal 700028, India",
+    "formattedAddress": "Airport Gate No. 1, VIP Road, Kolkata, West Bengal 700052",
     "confidence": 1,
     "source": "places-new"
   },
   "Kaikhali": {
-    "latitude": 22.6329544,
-    "longitude": 88.4348617,
+    "latitude": 22.6415,
+    "longitude": 88.4435,
     "placeId": "ChIJqzZ_djae-DkRRc7u94yTfD0",
-    "formattedAddress": "Kaikhali, Kolkata, West Bengal",
+    "formattedAddress": "Kaikhali Crossing, VIP Road, Kolkata, West Bengal 700052",
     "confidence": 1,
     "source": "places-new"
   },
   "Teghoria": {
-    "latitude": 22.621315100000004,
-    "longitude": 88.43853039999999,
+    "latitude": 22.6318,
+    "longitude": 88.4365,
     "placeId": "ChIJvwtCky-e-DkRBEXJA0pbWlw",
-    "formattedAddress": "Tegharia, Baguiati, Kolkata, West Bengal",
+    "formattedAddress": "Tegharia Crossing, VIP Road, Kolkata, West Bengal 700157",
     "confidence": 1,
     "source": "places-new"
   },
   "Kestopur": {
-    "latitude": 22.597185399999997,
-    "longitude": 88.43705849999999,
+    "latitude": 22.6145,
+    "longitude": 88.4230,
     "placeId": "ChIJqcbXtZt1AjoR9M-7YPNmB24",
-    "formattedAddress": "Kestopur, Kolkata, West Bengal",
+    "formattedAddress": "Kestopur Footbridge, VIP Road, Kolkata, West Bengal 700102",
     "confidence": 1,
     "source": "places-new"
   },
   "Baguihati": {
-    "latitude": 22.6137645,
-    "longitude": 88.43057209999999,
+    "latitude": 22.6205,
+    "longitude": 88.4285,
     "placeId": "ChIJaX1Z5iWe-DkRuOGTm5oiqPI",
-    "formattedAddress": "Baguiati, Kolkata, West Bengal",
+    "formattedAddress": "Baguiati Crossing, VIP Road, Kolkata, West Bengal 700059",
     "confidence": 1,
     "source": "places-new"
   },

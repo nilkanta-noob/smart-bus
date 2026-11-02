@@ -167,8 +167,9 @@
 .real-map-stage { background: #dce9ee; }
 .real-map { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; }
 .real-map-stage .gm-style { font-family: 'DM Sans', sans-serif; }
-.real-map-badge, .real-map-status { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; border: 1px solid rgba(255,255,255,.68); border-radius: 9px; color: #17344d; background: rgba(255,255,255,.86); box-shadow: 0 6px 18px rgba(32,71,104,.15); font-size: 9px; font-weight: 800; letter-spacing: .06em; }
-.real-map-badge { top: 14px; left: 17px; }.real-map-status { top: 14px; right: 16px; color: #4a6a84; letter-spacing: 0; font-weight: 700; text-transform: none; }.real-map-status svg { color: #3f97ff; }
+.real-map-badge { position: absolute; z-index: 2; top: 14px; left: 17px; display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; border: 1px solid rgba(255,255,255,.68); border-radius: 9px; color: #17344d; background: rgba(255,255,255,.86); box-shadow: 0 6px 18px rgba(32,71,104,.15); font-size: 9px; font-weight: 800; letter-spacing: .06em; }
+.real-map-status { position: absolute; z-index: 2; top: 54px; right: 14px; display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid rgba(255,255,255,.68); border-radius: 9px; color: #4a6a84; background: rgba(255,255,255,.86); box-shadow: 0 4px 14px rgba(32,71,104,.12); font-size: 9px; font-weight: 700; letter-spacing: 0; pointer-events: none; }
+.real-map-status svg { color: #3f97ff; }
 .dark .real-map-badge, .dark .real-map-status { color: #e7f3ff; background: rgba(10,29,46,.86); border-color: rgba(175,211,235,.18); }
 .real-map-legend { position: absolute; z-index: 2; bottom: 16px; left: 17px; display: flex; align-items: center; gap: 11px; padding: 8px 10px; color: #4e6b82; background: rgba(255,255,255,.88); border-radius: 9px; box-shadow: 0 5px 18px rgba(30,70,100,.13); font-size: 9px; }.dark .real-map-legend { color: #c0d4e2; background: rgba(10,29,46,.88); }.legend-bus { margin-right: 3px; font-style: normal; font-size: 12px; vertical-align: -1px; }
 .gmap-bus-marker { position: relative; display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px 3px 3px; color: #102235; border: 2px solid rgba(255,255,255,.96); border-radius: 16px; background: #4b9aff; box-shadow: 0 5px 14px rgba(26,77,126,.26); transform: translateY(-9px); cursor: pointer; transition: transform .16s ease, box-shadow .16s ease; }.gmap-bus-marker:hover { z-index: 10; transform: translateY(-12px) scale(1.06); box-shadow: 0 8px 20px rgba(26,77,126,.36); }.gmap-bus-marker.preview { background: #ffbf6d; }.gmap-bus-marker.live { background: #47d9ce; }.gmap-bus-icon { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.85); font-size: 15px; }.gmap-bus-marker b { padding-right: 2px; font: 700 10px 'DM Sans'; }.gmap-bus-pulse { position: absolute; inset: -5px; z-index: -1; border: 1px solid currentColor; border-radius: 20px; opacity: .35; animation: markerPulse 2.5s ease-out infinite; }
@@ -302,9 +303,13 @@
 
 /* Google Maps and Smart Bus group refinement */
 .google-map-shell { background:#dbe8ef; }
-.google-kolkata-map { position:absolute; inset:0; width:100%; height:100%; overflow:hidden; }
+.google-kolkata-map { position:absolute; inset:0; width:100%; height:100%; overflow:hidden; touch-action:pan-x pan-y pinch-zoom; cursor:grab; pointer-events:auto; }
+.google-kolkata-map:active { cursor:grabbing; }
+.leaflet-container { width:100% !important; height:100% !important; touch-action:pan-x pan-y pinch-zoom !important; cursor:grab !important; pointer-events:auto !important; -webkit-user-select:none; user-select:none; }
+.leaflet-container:active { cursor:grabbing !important; }
 .google-kolkata-map-fallback { border:0; background:#dbe7ee; }
-.google-kolkata-map .gm-style { font-family:'DM Sans', sans-serif; }
+.google-kolkata-map .gm-style { font-family:'DM Sans', sans-serif; cursor:grab; }
+.google-kolkata-map .gm-style:active { cursor:grabbing; }
 .google-map-shell .google-badge { color:#174a90; }
 .google-bus-marker { display:inline-flex; align-items:center; gap:4px; padding:4px 7px 4px 4px; border:2px solid #fff; border-radius:18px; color:#102b47; background:#4bd9c8; box-shadow:0 7px 18px rgba(20,75,103,.3); cursor:pointer; font:700 10px 'DM Sans'; transition:transform .18s ease, box-shadow .18s ease; }
 .google-bus-marker span { width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:#fff; font-size:15px; }
@@ -357,7 +362,7 @@
 .route-map-clear-btn { display:inline-flex; align-items:center; gap:5px; padding:6px 10px; background:rgba(255,107,98,.15); border:1px solid rgba(255,107,98,.35); color:#ff6b62; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer; transition:all .15s ease; flex-shrink:0; }
 .route-map-clear-btn:hover { background:rgba(255,107,98,.28); border-color:#ff6b62; color:#fff; }
 
-.route-stop-carousel { position:absolute; bottom:38px; left:12px; right:12px; z-index:20; display:flex; gap:6px; overflow-x:auto; padding:6px 2px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+.route-stop-carousel { position:absolute; bottom:38px; left:12px; right:52px; z-index:20; display:flex; gap:6px; overflow-x:auto; padding:6px 2px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 .route-stop-carousel::-webkit-scrollbar { display:none; }
 .route-stop-chip { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; background:rgba(7,18,31,.85); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.14); border-radius:18px; color:#cbd5e1; font-size:10px; font-weight:600; white-space:nowrap; cursor:pointer; transition:all .15s ease; flex-shrink:0; }
 .route-stop-chip:hover { border-color:#45d9d0; color:#45d9d0; background:rgba(7,18,31,.95); }

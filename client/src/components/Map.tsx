@@ -73,6 +73,9 @@ function loadGoogleMaps(apiKey?: string): Promise<typeof google> {
 
     (window as any).gm_authFailure = () => {
       console.warn("[Google Maps] Authentication failure: Please verify API key and ensure Maps JavaScript API is enabled in Google Cloud Console.");
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("smart_bus_gmaps_auth_failure"));
+      }
     };
 
     const timeout = setTimeout(() => {
@@ -191,7 +194,31 @@ function LeafletKolkataMap({
     mapRef.current = map;
     onReady?.(map);
 
+    // Invalidate size immediately and after layout settles so tiles, panning, and zoom gestures work 100%
+    const invalidate = () => {
+      try {
+        map.invalidateSize();
+      } catch {
+        /* noop */
+      }
+    };
+
+    const t1 = setTimeout(invalidate, 50);
+    const t2 = setTimeout(invalidate, 250);
+    const t3 = setTimeout(invalidate, 600);
+
+    const resizeObserver = new ResizeObserver(() => invalidate());
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+    window.addEventListener("resize", invalidate);
+
     return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", invalidate);
       map.remove();
       mapRef.current = null;
     };
@@ -218,23 +245,25 @@ function LeafletKolkataMap({
       const latLngs = path.map((pt) => [pt.lat, pt.lng] as [number, number]);
       latLngs.forEach((pt) => latLngBounds.extend(pt));
 
-      // Outer glow for premium look
+      // Outer glow for premium look (interactive: false so map drag/pan is never blocked)
       const glow = L.polyline(latLngs, {
         color: routeColor || ROUTE_BLUE,
         weight: 9,
         opacity: 0.35,
         lineCap: "round",
         lineJoin: "round",
+        interactive: false,
       }).addTo(map);
       polylinesRef.current.push(glow);
 
-      // Core Solid Blue route line
+      // Core Solid Blue route line (interactive: false so drag/pan gestures pass right through)
       const poly = L.polyline(latLngs, {
         color: routeColor || ROUTE_BLUE,
         weight: 5,
         opacity: 1.0,
         lineCap: "round",
         lineJoin: "round",
+        interactive: false,
       }).addTo(map);
       polylinesRef.current.push(poly);
     });
@@ -246,6 +275,7 @@ function LeafletKolkataMap({
         opacity: 0.95,
         lineCap: "round",
         lineJoin: "round",
+        interactive: false,
       }).addTo(map);
     }
 
@@ -526,7 +556,6 @@ export function GoogleKolkataMap({
         streetViewControl: false,
         fullscreenControl: false,
         clickableIcons: false,
-        mapId: "DEMO_MAP_ID",
         styles: darkMode
           ? [
               { elementType: "geometry", stylers: [{ color: "#1b2b3b" }] },
@@ -541,6 +570,14 @@ export function GoogleKolkataMap({
       setEngine("google");
       trafficRef.current = new g.maps.TrafficLayer();
       transitRef.current = new g.maps.TransitLayer();
+
+      // Trigger resize after mounting to ensure full interactivity
+      setTimeout(() => {
+        if (mapRef.current) {
+          g.maps.event.trigger(mapRef.current, "resize");
+        }
+      }, 150);
+
       onReady?.(map);
     } catch {
       setEngine("leaflet");
@@ -583,8 +620,18 @@ export function GoogleKolkataMap({
 
     checkKeyAndInit();
 
+    // Listen for Google Maps key auth failure and seamlessly switch to Leaflet
+    const handleAuthFailure = () => {
+      toast.error("Google Maps API authentication failed", {
+        description: "Switched to OpenStreetMap engine. Check your API key in Google Cloud Console.",
+      });
+      setEngine("leaflet");
+    };
+    window.addEventListener("smart_bus_gmaps_auth_failure", handleAuthFailure);
+
     return () => {
       cancelled = true;
+      window.removeEventListener("smart_bus_gmaps_auth_failure", handleAuthFailure);
     };
   }, [initGoogleMaps]);
 
@@ -700,6 +747,7 @@ export function GoogleKolkataMap({
             strokeColor: routeColor || ROUTE_BLUE,
             strokeOpacity: 0.95,
             strokeWeight: 6,
+            clickable: false, // Clickable false ensures map panning and gestures pass through
             geodesic: true,
             zIndex: 10,
             map,
@@ -712,6 +760,7 @@ export function GoogleKolkataMap({
         strokeColor: "#38bdf8",
         strokeOpacity: 1,
         strokeWeight: 6,
+        clickable: false,
         geodesic: true,
         zIndex: 11,
         map,
@@ -886,7 +935,7 @@ export function GoogleKolkataMap({
       </div>
 
       {/* Dedicated Floating Zoom & Recenter Stack */}
-      <div className="absolute bottom-20 right-3 z-30 flex flex-col items-center gap-1.5">
+      <div className="absolute bottom-28 right-3 z-30 flex flex-col items-center gap-1.5 pointer-events-auto">
         <button
           type="button"
           onClick={() => {

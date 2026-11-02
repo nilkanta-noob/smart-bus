@@ -1,8 +1,8 @@
 import type { LatLng, StopMarker } from "@/lib/kolkata-stops";
 
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-const CACHE_PREFIX = "smart-bus-road-route:v1:";
+const CACHE_PREFIX = "smart-bus-road-route:v2:";
 const MAX_INTERMEDIATES = 25;
 
 export type RoadRouteGeometry = {
