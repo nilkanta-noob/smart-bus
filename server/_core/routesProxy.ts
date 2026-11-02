@@ -21,6 +21,19 @@ function pointToWaypoint(point: Point) {
 }
 
 export function registerRoutesProxy(app: Express) {
+  app.get("/api/maps/config", (_req, res) => {
+    const rawKey =
+      (process.env.VITE_GOOGLE_MAPS_API_KEY as string) ||
+      (process.env.GOOGLE_MAPS_API_KEY as string) ||
+      ENV.googleMapsApiKey ||
+      "";
+    const apiKey = rawKey.trim();
+    res.json({
+      configured: apiKey.length > 0,
+      apiKey,
+    });
+  });
+
   app.post("/api/maps/compute-routes", async (req, res) => {
     const input = req.body as Partial<RouteRequest>;
     if (!isPoint(input?.origin) || !isPoint(input?.destination) ||

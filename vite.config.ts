@@ -162,6 +162,11 @@ export default defineConfig({
     },
   },
   envDir: path.resolve(import.meta.dirname),
+  define: {
+    "import.meta.env.VITE_GOOGLE_MAPS_API_KEY": JSON.stringify(
+      process.env.VITE_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY || ""
+    ),
+  },
   root: path.resolve(import.meta.dirname, "client"),
   publicDir: path.resolve(import.meta.dirname, "client", "public"),
   build: {

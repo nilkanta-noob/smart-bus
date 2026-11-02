@@ -31,8 +31,20 @@ export type { StopMarker };
 const STORAGE_KEY = "smart_bus_gmaps_key";
 const ROUTE_BLUE = "#1a73e8"; // Google Transit Blue
 
+let cachedServerKey: string | undefined = undefined;
+
+export function setCachedServerGoogleMapsKey(key: string | undefined) {
+  cachedServerKey = key;
+  if (typeof window !== "undefined" && key) {
+    (window as any).__SMART_BUS_GMAPS_KEY = key;
+  }
+}
+
 export function getActiveGoogleMapsKey(): string | undefined {
   if (typeof window === "undefined") return undefined;
+  if (cachedServerKey && cachedServerKey.trim().length > 0) return cachedServerKey.trim();
+  const windowKey = (window as any).__SMART_BUS_GMAPS_KEY as string | undefined;
+  if (windowKey && windowKey.trim().length > 0) return windowKey.trim();
   const envKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
   if (envKey && envKey.trim().length > 0) return envKey.trim();
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -58,6 +70,10 @@ function loadGoogleMaps(apiKey?: string): Promise<typeof google> {
     script.src = `https://maps.googleapis.com/maps/api/js?${keyParam}v=weekly&libraries=marker,places,geometry`;
     script.async = true;
     script.defer = true;
+
+    (window as any).gm_authFailure = () => {
+      console.warn("[Google Maps] Authentication failure: Please verify API key and ensure Maps JavaScript API is enabled in Google Cloud Console.");
+    };
 
     const timeout = setTimeout(() => {
       reject(new Error("Google Maps load timed out"));
@@ -517,14 +533,45 @@ export function GoogleKolkataMap({
     }
   }, [darkMode, onReady]);
 
-  // Initial load check
+  // Initial load check: test local env/storage, and query server config (Vercel env)
   useEffect(() => {
-    const key = getActiveGoogleMapsKey();
-    if (key) {
-      initGoogleMaps(key);
-    } else {
-      setEngine("leaflet");
+    let cancelled = false;
+
+    async function checkKeyAndInit() {
+      const immediateKey = getActiveGoogleMapsKey();
+      if (immediateKey) {
+        setActiveKey(immediateKey);
+        initGoogleMaps(immediateKey);
+        return;
+      }
+
+      // Check if server environment has the key configured (e.g. Vercel env vars)
+      try {
+        const res = await fetch("/api/maps/config");
+        if (res.ok) {
+          const data = (await res.json()) as { apiKey?: string; configured?: boolean };
+          if (!cancelled && data.apiKey && data.apiKey.trim().length > 0) {
+            const serverKey = data.apiKey.trim();
+            setCachedServerGoogleMapsKey(serverKey);
+            setActiveKey(serverKey);
+            initGoogleMaps(serverKey);
+            return;
+          }
+        }
+      } catch {
+        // network or serverless cold start error, fallback cleanly
+      }
+
+      if (!cancelled) {
+        setEngine("leaflet");
+      }
     }
+
+    checkKeyAndInit();
+
+    return () => {
+      cancelled = true;
+    };
   }, [initGoogleMaps]);
 
   // Save custom key
@@ -540,6 +587,7 @@ export function GoogleKolkataMap({
     }
 
     localStorage.setItem(STORAGE_KEY, trimmed);
+    setCachedServerGoogleMapsKey(trimmed);
     setActiveKey(trimmed);
     setKeyModalOpen(false);
     toast.success("Saved Google Maps API key! Initializing Google Maps...");
@@ -850,7 +898,9 @@ export function GoogleKolkataMap({
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              Paste your Google Maps API Key below. The key is saved locally in your browser and activates Google Maps JavaScript API.
+              {activeKey
+                ? "A Google Maps API key is currently active. You can replace it or manage it below."
+                : "Paste your Google Maps API Key below. The key is saved locally in your browser and activates Google Maps JavaScript API."}
             </p>
 
             <div className="space-y-1.5">
